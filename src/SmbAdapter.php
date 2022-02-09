@@ -163,25 +163,12 @@ class SmbAdapter implements FilesystemAdapter
 
     public function lastModified(string $path): FileAttributes
     {
-        $location = $this->prefixer->prefixPath($path);
-
-        try {
-            $fileInfo = $this->share->stat($location);
-        } catch (Throwable $e) {
-            throw UnableToRetrieveMetadata::lastModified($location, '', $e);
-        }
-
-        return new FileAttributes(
-            $location,
-            $fileInfo->getSize(),
-            null,
-            $fileInfo->getMTime(),
-        );
+        return $this->getFileAttributes($path);
     }
 
     public function fileSize(string $path): FileAttributes
     {
-        // TODO: Implement fileSize() method.
+        return $this->getFileAttributes($path);
     }
 
     public function listContents(string $path, bool $deep): iterable
