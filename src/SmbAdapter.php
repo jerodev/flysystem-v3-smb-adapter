@@ -51,33 +51,33 @@ class SmbAdapter implements FilesystemAdapter
 
     public function write(string $path, string $contents, Config $config): void
     {
-        $this->recursiveCreateDir(dirname($path));
+        $this->recursiveCreateDir(\dirname($path));
 
         $location = $this->prefixer->prefixPath($path);
 
         try {
             $stream = $this->share->write($location);
-            fwrite($stream, $contents);
+            \fwrite($stream, $contents);
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
         } finally {
-             fclose($stream);
+             \fclose($stream);
         }
     }
 
     public function writeStream(string $path, $resource, Config $config): void
     {
-        $this->recursiveCreateDir(dirname($path));
+        $this->recursiveCreateDir(\dirname($path));
 
         $location = $this->prefixer->prefixPath($path);
 
         try {
             $stream = $this->share->write($location);
-            stream_copy_to_stream($resource, $stream);
+            \stream_copy_to_stream($resource, $stream);
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
         } finally {
-            fclose($stream);
+            \fclose($stream);
         }
     }
 
@@ -85,12 +85,12 @@ class SmbAdapter implements FilesystemAdapter
     {
         $stream = $this->readStream($path);
 
-        $contents = stream_get_contents($stream);
+        $contents = \stream_get_contents($stream);
         if ($contents === false) {
             throw UnableToReadFile::fromLocation($path);
         }
 
-        fclose($stream);
+        \fclose($stream);
 
         return $contents;
     }
@@ -155,7 +155,7 @@ class SmbAdapter implements FilesystemAdapter
 
         $mimeType = $this->mimeTypeDetector->detectMimeType($path, $resource);
         if ($mimeType === null) {
-            throw UnableToRetrieveMetadata::mimeType($path, error_get_last()['message'] ?? '');
+            throw UnableToRetrieveMetadata::mimeType($path, \error_get_last()['message'] ?? '');
         }
 
         return new FileAttributes($path, null, null, null, $mimeType);
@@ -176,7 +176,6 @@ class SmbAdapter implements FilesystemAdapter
             $fileInfo->getSize(),
             null,
             $fileInfo->getMTime(),
-
         );
     }
 
@@ -206,10 +205,10 @@ class SmbAdapter implements FilesystemAdapter
             return;
         }
 
-        $directories = explode(DIRECTORY_SEPARATOR, $path);
-        if (count($directories) > 1) {
-            $parentDirectories = array_splice($directories, 0, count($directories) - 1);
-            $this->recursiveCreateDir(implode(DIRECTORY_SEPARATOR, $parentDirectories));
+        $directories = \explode(DIRECTORY_SEPARATOR, $path);
+        if (\count($directories) > 1) {
+            $parentDirectories = \array_splice($directories, 0, \count($directories) - 1);
+            $this->recursiveCreateDir(\implode(DIRECTORY_SEPARATOR, $parentDirectories));
         }
 
         $location = $this->prefixer->prefixPath($path);
@@ -232,7 +231,6 @@ class SmbAdapter implements FilesystemAdapter
             $fileInfo->getSize(),
             null,
             $fileInfo->getMTime(),
-
         );
     }
 }

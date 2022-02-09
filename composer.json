@@ -3,17 +3,23 @@
     "description": "Flysystem v3 adapter for SMB",
     "type": "library",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Jerodev\\Flysystem\\Smb\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "jerodev",
             "email": "jeroen@deviaene.eu"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:jerodev/code-styles.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Jerodev\\Flysystem\\Smb\\": "src/"
+        }
+    },
     "require": {
         "php": "^8.0",
         "ext-smbclient": "*",
@@ -21,7 +27,8 @@
         "league/flysystem": "^3.0"
     },
     "require-dev": {
-        "illuminate/support": "^9.0"
+        "illuminate/support": "^9.0",
+        "jerodev/code-styles": "dev-master"
     },
     "extra": {
         "laravel": {
@@ -29,5 +36,12 @@
                 "Jerodev\\Flysystem\\Smb\\LaravelSmbAdapterProvider"
             ]
         }
-    }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
