@@ -1,0 +1,23 @@
+{
+    "name": "jerodev/flysystem-v3-smb-adapter",
+    "description": "Flysystem v3 adapter for SMB",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jerodev\\Flysystem\\Smb\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jerodev",
+            "email": "jeroen@deviaene.eu"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-smbclient": "*",
+        "icewind/smb": "^3.5",
+        "league/flysystem": "^3.0"
+    }
+}
