@@ -5,12 +5,14 @@ namespace Jerodev\Flysystem\Smb;
 use Icewind\SMB\Exception\NotFoundException;
 use Icewind\SMB\IShare;
 use League\Flysystem\Config;
+use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\PathPrefixer;
 use League\Flysystem\UnableToCreateDirectory;
 use League\Flysystem\UnableToDeleteDirectory;
 use League\Flysystem\UnableToDeleteFile;
+use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\UnableToSetVisibility;
@@ -23,9 +25,11 @@ class SmbAdapter implements FilesystemAdapter
     private FinfoMimeTypeDetector $mimeTypeDetector;
     private PathPrefixer $prefixer;
 
+    private array $fakeVisibility = [];
+
     public function __construct(
         private IShare $share,
-        $prefix = null,
+        string $prefix = '',
     ) {
         $this->mimeTypeDetector = new FinfoMimeTypeDetector();
         $this->prefixer = new PathPrefixer($prefix, DIRECTORY_SEPARATOR);
@@ -58,10 +62,16 @@ class SmbAdapter implements FilesystemAdapter
         try {
             $stream = $this->share->write($location);
             \fwrite($stream, $contents);
+
+            if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
+                $this->fakeVisibility[$path] = $visibility;
+            }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
         } finally {
-             \fclose($stream);
+            if (isset($stream)) {
+                \fclose($stream);
+            }
         }
     }
 
@@ -74,23 +84,35 @@ class SmbAdapter implements FilesystemAdapter
         try {
             $stream = $this->share->write($location);
             \stream_copy_to_stream($resource, $stream);
+
+            if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
+                $this->fakeVisibility[$path] = $visibility;
+            }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
         } finally {
-            \fclose($stream);
+            if (isset($stream)) {
+                \fclose($stream);
+            }
         }
     }
 
     public function read(string $path): string
     {
-        $stream = $this->readStream($path);
+        try {
+            $stream = $this->readStream($path);
+            $contents = \stream_get_contents($stream);
+        } catch (Throwable $e) {
+            throw UnableToReadFile::fromLocation($path, $e->getMessage(), $e);
+        } finally {
+            if (isset($stream)) {
+                \fclose($stream);
+            }
+        }
 
-        $contents = \stream_get_contents($stream);
         if ($contents === false) {
             throw UnableToReadFile::fromLocation($path);
         }
-
-        \fclose($stream);
 
         return $contents;
     }
@@ -114,8 +136,10 @@ class SmbAdapter implements FilesystemAdapter
 
         try {
             $this->share->del($location);
+        } catch (NotFoundException) {
+            // We should ignore exceptions if the file did not exist in the first place.
         } catch (Throwable $e) {
-            throw UnableToDeleteFile::atLocation($location, '', $e);
+            throw UnableToDeleteFile::atLocation($location, $e->getMessage(), $e);
         }
     }
 
@@ -126,7 +150,7 @@ class SmbAdapter implements FilesystemAdapter
         try {
             $this->share->rmdir($location);
         } catch (Throwable $e) {
-            throw UnableToDeleteDirectory::atLocation($location, '', $e);
+            throw UnableToDeleteDirectory::atLocation($location, $e->getMessage(), $e);
         }
     }
 
@@ -141,19 +165,29 @@ class SmbAdapter implements FilesystemAdapter
 
     public function setVisibility(string $path, string $visibility): void
     {
-        throw UnableToSetVisibility::atLocation($path, 'Sbm does not support visibility');
+        if (! $this->fileExists($path)) {
+            throw UnableToSetVisibility::atLocation($path, 'File does not exist');
+        }
+
+        $this->fakeVisibility[$path] = $visibility;
     }
 
     public function visibility(string $path): FileAttributes
     {
-        throw UnableToSetVisibility::atLocation($path, 'Sbm does not support visibility');
+        return $this->getFileAttributes($path);
     }
 
     public function mimeType(string $path): FileAttributes
     {
-        $resource = $this->readStream($path);
+        try {
+            $resource = $this->readStream($path);
+        } catch (Throwable $e) {
+            throw UnableToRetrieveMetadata::mimeType($path, $e->getMessage(), $e);
+        }
 
         $mimeType = $this->mimeTypeDetector->detectMimeType($path, $resource);
+        \fclose($resource);
+
         if ($mimeType === null) {
             throw UnableToRetrieveMetadata::mimeType($path, \error_get_last()['message'] ?? '');
         }
@@ -173,17 +207,48 @@ class SmbAdapter implements FilesystemAdapter
 
     public function listContents(string $path, bool $deep): iterable
     {
-        // TODO: Implement listContents() method.
+        foreach ($this->share->dir($path) as $fileInfo) {
+            if ($fileInfo->isDirectory()) {
+                yield new DirectoryAttributes($fileInfo->getPath(), $this->fakeVisibility[$fileInfo->getPath()] ?? null, $fileInfo->getMTime());
+                if ($deep) {
+                    foreach ($this->listContents($fileInfo->getPath(), true) as $deepFileInfo) {
+                        yield $deepFileInfo;
+                    }
+                }
+            } else {
+                yield new FileAttributes($fileInfo->getPath(), $fileInfo->getSize(), $this->fakeVisibility[$fileInfo->getPath()] ?? null, $fileInfo->getMTime());
+            }
+        }
     }
 
     public function move(string $source, string $destination, Config $config): void
     {
-        // TODO: Implement move() method.
+        try {
+            $this->share->rename($source, $destination);
+        } catch (Throwable $e) {
+            throw UnableToMoveFile::fromLocationTo($source, $destination, $e);
+        }
     }
 
     public function copy(string $source, string $destination, Config $config): void
     {
-        // TODO: Implement copy() method.
+        $content = $this->read($source);
+        $this->write($destination, $content, $config);
+
+        $this->fakeVisibility[$destination] = $config->get(Config::OPTION_VISIBILITY, $this->fakeVisibility[$source] ?? null);
+    }
+
+    /** Recursively remove all data from a folder */
+    public function clearDir(string $path): void
+    {
+        foreach ($this->listContents($path, false) as $content) {
+            if ($content instanceof DirectoryAttributes) {
+                $this->clearDir($content->path());
+                $this->deleteDirectory($content->path());
+            } else {
+                $this->delete($content->path());
+            }
+        }
     }
 
     protected function recursiveCreateDir($path)
@@ -213,10 +278,14 @@ class SmbAdapter implements FilesystemAdapter
             throw UnableToRetrieveMetadata::lastModified($location, '', $e);
         }
 
+        if ($fileInfo->isDirectory()) {
+            throw UnableToRetrieveMetadata::lastModified($location, "'{$path}' is a directory");
+        }
+
         return new FileAttributes(
             $location,
             $fileInfo->getSize(),
-            null,
+            $this->fakeVisibility[$path] ?? null,
             $fileInfo->getMTime(),
         );
     }

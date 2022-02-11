@@ -20,6 +20,11 @@
             "Jerodev\\Flysystem\\Smb\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Jerodev\\Flysystem\\Smb\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": "^8.0",
         "ext-smbclient": "*",
@@ -28,7 +33,9 @@
     },
     "require-dev": {
         "illuminate/support": "^9.0",
-        "jerodev/code-styles": "dev-master"
+        "jerodev/code-styles": "dev-master",
+        "league/flysystem-adapter-test-utilities": "^3.0",
+        "phpunit/phpunit": "^9.5"
     },
     "extra": {
         "laravel": {

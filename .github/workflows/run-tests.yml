@@ -8,8 +8,27 @@ on:
 
 jobs:
   test:
-    name: Test phpcs rules
+    name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    services:
+      samba:
+        image: "servercontainers/samba"
+        env:
+          ACCOUNT_test: test
+          UID_test: 1000
+          SAMBA_VOLUME_CONFIG_test: "[test]; path=/tmp; valid users = test; guest ok = no; read only = no; browseable = yes"
+        ports:
+          - 139:139
+          - 445:445
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - 8.0
+          - 8.1
 
     steps:
       -   name: Checkout code
@@ -19,17 +38,24 @@ jobs:
           uses: actions/cache@v2
           with:
             path: vendor
-            key: composer-${{ hashFiles('composer.json') }}
+            key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
 
       -   name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
-            php-version: 8.1
+            php-version: ${{ matrix.php }}
             tools: composer:v2
             extensions: smbclient
 
+      -   name: Smb Config
+          run: |
+            echo '{"host": "localhost","user": "test","password": "test","share": "test","root": ""}' > tests/config.json
+
       -   name: Install dependencies
-          run: composer install --no-interaction
+          run: composer install --prefer-dist --no-interaction --no-suggest
 
       -   name: 🎨 Code Styles
           run: vendor/bin/phpcs -p
+
+      -   name: 🧪 Unit tests
+          run: vendor/bin/phpunit
