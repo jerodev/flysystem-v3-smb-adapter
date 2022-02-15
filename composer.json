@@ -1,6 +1,6 @@
 {
     "name": "jerodev/flysystem-v3-smb-adapter",
-    "description": "Flysystem v3 adapter for SMB",
+    "description": "SMB adapter for Flysystem v3",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -32,6 +32,7 @@
         "league/flysystem": "^3.0"
     },
     "require-dev": {
+        "illuminate/filesystem": "^9.0",
         "illuminate/support": "^9.0",
         "jerodev/code-styles": "dev-master",
         "league/flysystem-adapter-test-utilities": "^3.0",
