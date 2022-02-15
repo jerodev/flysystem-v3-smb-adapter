@@ -253,7 +253,7 @@ class SmbAdapter implements FilesystemAdapter
 
     protected function recursiveCreateDir($path)
     {
-        if ($this->directoryExists($path)) {
+        if ($path === '.' || $this->directoryExists($path)) {
             return;
         }
 
