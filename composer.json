@@ -1,6 +1,13 @@
 {
     "name": "jerodev/flysystem-v3-smb-adapter",
     "description": "SMB adapter for Flysystem v3",
+    "keywords": [
+        "flysystem",
+        "filesystem",
+        "laravel",
+        "samba",
+        "smb"
+    ],
     "type": "library",
     "license": "MIT",
     "authors": [
