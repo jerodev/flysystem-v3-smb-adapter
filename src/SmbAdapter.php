@@ -25,6 +25,7 @@ class SmbAdapter implements FilesystemAdapter
     private FinfoMimeTypeDetector $mimeTypeDetector;
     private PathPrefixer $prefixer;
 
+    /** @var array<string, string> */
     private array $fakeVisibility = [];
 
     public function __construct(
@@ -64,7 +65,7 @@ class SmbAdapter implements FilesystemAdapter
             \fwrite($stream, $contents);
 
             if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
-                $this->fakeVisibility[$path] = $visibility;
+                $this->fakeVisibility[$path] = \strval($visibility);
             }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
@@ -86,7 +87,7 @@ class SmbAdapter implements FilesystemAdapter
             \stream_copy_to_stream($resource, $stream);
 
             if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
-                $this->fakeVisibility[$path] = $visibility;
+                $this->fakeVisibility[$path] = \strval($visibility);
             }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
@@ -235,7 +236,7 @@ class SmbAdapter implements FilesystemAdapter
         $content = $this->read($source);
         $this->write($destination, $content, $config);
 
-        $this->fakeVisibility[$destination] = $config->get(Config::OPTION_VISIBILITY, $this->fakeVisibility[$source] ?? null);
+        $this->fakeVisibility[$destination] = \strval($config->get(Config::OPTION_VISIBILITY, $this->fakeVisibility[$source] ?? null));
     }
 
     /** Recursively remove all data from a folder */
@@ -251,7 +252,7 @@ class SmbAdapter implements FilesystemAdapter
         }
     }
 
-    protected function recursiveCreateDir($path)
+    protected function recursiveCreateDir(string $path): void
     {
         if ($path === '.' || $this->directoryExists($path)) {
             return;

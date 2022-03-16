@@ -57,5 +57,8 @@ jobs:
       -   name: 🎨 Code Styles
           run: vendor/bin/phpcs -p
 
+      -   name: 🔬 Static analysis
+          run: vendor/bin/phpstan analyse
+
       -   name: 🧪 Unit tests
           run: vendor/bin/phpunit
