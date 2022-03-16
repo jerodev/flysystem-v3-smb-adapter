@@ -10,6 +10,7 @@ This package enables you to communicate with SMB shares through [Flysystem v3](h
 ## Usage
 
 The adapter uses the [Icewind SMB](https://github.com/icewind1991/SMB) package to communicate with the share.
+To use the flysystem adapter, you have to pass it an instance of [`\Icewind\SMB\IShare`](https://github.com/icewind1991/SMB/blob/master/src/IShare.php). Below is an example of how to create a share instance using the factory provided by Icewind SMB. 
 
 ```php
 $server = (new \Icewind\SMB\ServerFactory())->createServer(
@@ -39,5 +40,5 @@ All you have to do is configure the share in your `config/filesystems.php` simil
         'username' => \env('SMB_USERNAME', ''),
         'password' => \env('SMB_PASSWORD', ''),
     ],
-]
+],
 ```
