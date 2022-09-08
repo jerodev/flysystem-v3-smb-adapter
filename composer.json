@@ -33,7 +33,7 @@
         }
     },
     "require": {
-        "php": "^8.0",
+        "php": ">=8.0.2",
         "ext-smbclient": "*",
         "icewind/smb": "^3.5",
         "league/flysystem": "^3.0"
@@ -43,6 +43,7 @@
         "illuminate/support": "^9.0",
         "jerodev/code-styles": "dev-master",
         "league/flysystem-adapter-test-utilities": "^3.0",
+        "orchestra/testbench": "^7.7",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5"
     },
@@ -56,7 +57,13 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.0.2"
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
