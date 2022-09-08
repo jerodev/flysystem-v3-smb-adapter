@@ -3,5 +3,4 @@
     <rule ref="./vendor/jerodev/code-styles/phpcs.xml" />
 
     <file>src</file>
-    <file>tests</file>
 </ruleset>

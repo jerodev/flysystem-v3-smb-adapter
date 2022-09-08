@@ -3,8 +3,6 @@
 namespace Jerodev\Flysystem\Smb\Tests;
 
 use Icewind\SMB\BasicAuth;
-use Icewind\SMB\IOptions;
-use Icewind\SMB\Options;
 use Icewind\SMB\ServerFactory;
 use Jerodev\Flysystem\Smb\SmbAdapter;
 use League\Flysystem\AdapterTestUtilities\FilesystemAdapterTestCase;
