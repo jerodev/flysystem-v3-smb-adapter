@@ -43,6 +43,7 @@
         "illuminate/support": "^9.0",
         "jerodev/code-styles": "dev-master",
         "league/flysystem-adapter-test-utilities": "^3.0",
+        "orchestra/testbench": "^7.7",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5"
     },
