@@ -33,7 +33,7 @@
         }
     },
     "require": {
-        "php": "^8.0",
+        "php": ">=8.0.2",
         "ext-smbclient": "*",
         "icewind/smb": "^3.5",
         "league/flysystem": "^3.0"
@@ -60,6 +60,9 @@
         "sort-packages": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.0.2"
         }
     },
     "minimum-stability": "dev",
