@@ -39,6 +39,11 @@ All you have to do is configure the share in your `config/filesystems.php` simil
         'path' => \env('SMB_PATH', 'test'),
         'username' => \env('SMB_USERNAME', ''),
         'password' => \env('SMB_PASSWORD', ''),
+        
+        // Optional Icewind SMB options
+        'smb_version_min' => \Icewind\SMB\IOptions::PROTOCOL_SMB2,
+        'smb_version_max' => \Icewind\SMB\IOptions::PROTOCOL_SMB2_24,
+        'timeout' => 20,
     ],
 ],
 ```
