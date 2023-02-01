@@ -12,7 +12,7 @@ use League\Flysystem\Filesystem;
 
 class LaravelSmbAdapterProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         Storage::extend('smb', static function ($app, $config) {
             $options = new Options();
