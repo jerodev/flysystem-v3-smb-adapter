@@ -12,7 +12,7 @@ final class LaravelSmbAdapterTest extends TestCase
     {
         parent::setUp();
 
-        (new LaravelSmbAdapterProvider($this->app))->register();
+        (new LaravelSmbAdapterProvider($this->app))->boot();
     }
 
     /** @test */
