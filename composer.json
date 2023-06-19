@@ -34,7 +34,6 @@
     },
     "require": {
         "php": ">=8.0.2",
-        "ext-smbclient": "*",
         "icewind/smb": "^3.5",
         "league/flysystem": "^3.0"
     },
@@ -46,6 +45,9 @@
         "orchestra/testbench": "^7.7",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5"
+    },
+    "suggest": {
+        "ext-smbclient": "Required to use this package"
     },
     "extra": {
         "laravel": {
