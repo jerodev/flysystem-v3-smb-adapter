@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PhpCs_AnyFinder" xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
-    <rule ref="./vendor/jerodev/code-styles/phpcs.xml" />
+    <rule ref="./vendor/jerodev/code-styles/phpcs.xml">
+        <!-- This does not play well with tests -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps" />
+    </rule>
 
     <file>src</file>
 </ruleset>
