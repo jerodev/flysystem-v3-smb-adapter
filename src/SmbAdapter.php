@@ -34,7 +34,7 @@ class SmbAdapter implements FilesystemAdapter
         string $prefix = '',
     ) {
         $this->mimeTypeDetector = new FinfoMimeTypeDetector();
-        $this->prefixer = new PathPrefixer($prefix, DIRECTORY_SEPARATOR);
+        $this->prefixer = new PathPrefixer($prefix, \DIRECTORY_SEPARATOR);
     }
 
     public function fileExists(string $path): bool
@@ -45,6 +45,8 @@ class SmbAdapter implements FilesystemAdapter
             $this->share->stat($location);
         } catch (NotFoundException) {
             return false;
+        } catch (Throwable $e) {
+            throw $e;
         }
 
         return true;
@@ -70,6 +72,7 @@ class SmbAdapter implements FilesystemAdapter
                 $this->fakeVisibility[$path] = (string)$visibility;
             }
         } catch (Throwable $e) {
+            throw $e;
             throw UnableToWriteFile::atLocation($location, '', $e);
         } finally {
             if (isset($stream)) {
@@ -271,10 +274,10 @@ class SmbAdapter implements FilesystemAdapter
             return;
         }
 
-        $directories = \explode(DIRECTORY_SEPARATOR, $path);
+        $directories = \explode(\DIRECTORY_SEPARATOR, $path);
         if (\count($directories) > 1) {
             $parentDirectories = \array_splice($directories, 0, \count($directories) - 1);
-            $this->recursiveCreateDir(\implode(DIRECTORY_SEPARATOR, $parentDirectories));
+            $this->recursiveCreateDir(\implode(\DIRECTORY_SEPARATOR, $parentDirectories));
         }
 
         $location = $this->prefixer->prefixPath($path);
