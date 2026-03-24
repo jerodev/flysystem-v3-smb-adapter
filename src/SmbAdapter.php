@@ -9,6 +9,7 @@ use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\PathPrefixer;
+use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToCreateDirectory;
 use League\Flysystem\UnableToDeleteDirectory;
 use League\Flysystem\UnableToDeleteFile;
@@ -235,8 +236,12 @@ class SmbAdapter implements FilesystemAdapter
 
     public function copy(string $source, string $destination, Config $config): void
     {
-        $content = $this->read($source);
-        $this->write($destination, $content, $config);
+        try {
+            $content = $this->read($source);
+            $this->write($destination, $content, $config);
+        } catch (Throwable $e) {
+            throw UnableToCopyFile::fromLocationTo($source, $destination, $e);
+        }
 
         $visibility = $config->get(
             Config::OPTION_VISIBILITY,
