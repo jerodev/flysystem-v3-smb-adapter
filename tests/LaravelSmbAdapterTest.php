@@ -7,6 +7,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Jerodev\Flysystem\Smb\LaravelSmbAdapterProvider;
 use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 final class LaravelSmbAdapterTest extends TestCase
 {
@@ -17,11 +18,19 @@ final class LaravelSmbAdapterTest extends TestCase
         (new LaravelSmbAdapterProvider($this->app))->boot();
     }
 
-    /** @test */
+    #[Test]
     public function it_should_correctly_set_options(): void
     {
+        /**
+         * @var array{
+         *     host: string,
+         *     user: string,
+         *     password: string,
+         *     share: string,
+         *     root: string,
+         * } $config
+         */
         $config = \json_decode(\file_get_contents(__DIR__ . '/config.json'), true);
-        \assert(\is_array($config));
 
         $config = [
             'driver' => 'smb',
@@ -41,11 +50,19 @@ final class LaravelSmbAdapterTest extends TestCase
         $this->assertEquals($config, $disk->getConfig());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_write_files_using_laravel_adapter(): void
     {
+        /**
+         * @var array{
+         *     host: string,
+         *     user: string,
+         *     password: string,
+         *     share: string,
+         *     root: string,
+         * } $config
+         */
         $config = \json_decode(\file_get_contents(__DIR__ . '/config.json'), true);
-        \assert(\is_array($config));
 
         $disk = Storage::build([
             'driver' => 'smb',

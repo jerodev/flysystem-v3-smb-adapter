@@ -33,18 +33,19 @@
         }
     },
     "require": {
-        "php": ">=8.0.2",
-        "icewind/smb": "^3.5",
+        "php": ">=8.3",
+        "icewind/smb": "^3.8",
         "league/flysystem": "^3.0"
     },
     "require-dev": {
-        "illuminate/filesystem": "^9.0",
-        "illuminate/support": "^9.0",
+        "illuminate/filesystem": "^12.0|^13.0",
+        "illuminate/support": "^12.0|^13.0",
         "jerodev/code-styles": "dev-master",
         "league/flysystem-adapter-test-utilities": "^3.0",
-        "orchestra/testbench": "^7.7",
-        "phpstan/phpstan": "^1.4",
-        "phpunit/phpunit": "^9.5"
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^11",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.0"
     },
     "suggest": {
         "ext-smbclient": "Required to use this package"
@@ -64,7 +65,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         },
         "platform": {
-            "php": "8.0.2"
+            "php": "8.3"
         }
     },
     "minimum-stability": "dev",

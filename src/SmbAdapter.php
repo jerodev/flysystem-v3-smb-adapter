@@ -9,6 +9,7 @@ use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\PathPrefixer;
+use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToCreateDirectory;
 use League\Flysystem\UnableToDeleteDirectory;
 use League\Flysystem\UnableToDeleteFile;
@@ -29,11 +30,11 @@ class SmbAdapter implements FilesystemAdapter
     private array $fakeVisibility = [];
 
     public function __construct(
-        private IShare $share,
+        private readonly IShare $share,
         string $prefix = '',
     ) {
         $this->mimeTypeDetector = new FinfoMimeTypeDetector();
-        $this->prefixer = new PathPrefixer($prefix, DIRECTORY_SEPARATOR);
+        $this->prefixer = new PathPrefixer($prefix, \DIRECTORY_SEPARATOR);
     }
 
     public function fileExists(string $path): bool
@@ -65,7 +66,8 @@ class SmbAdapter implements FilesystemAdapter
             \fwrite($stream, $contents);
 
             if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
-                $this->fakeVisibility[$path] = \strval($visibility);
+                \assert(\is_string($visibility) || \is_int($visibility));
+                $this->fakeVisibility[$path] = (string)$visibility;
             }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
@@ -87,7 +89,8 @@ class SmbAdapter implements FilesystemAdapter
             \stream_copy_to_stream($resource, $stream);
 
             if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
-                $this->fakeVisibility[$path] = \strval($visibility);
+                \assert(\is_string($visibility) || \is_int($visibility));
+                $this->fakeVisibility[$path] = (string)$visibility;
             }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
@@ -233,10 +236,20 @@ class SmbAdapter implements FilesystemAdapter
 
     public function copy(string $source, string $destination, Config $config): void
     {
-        $content = $this->read($source);
-        $this->write($destination, $content, $config);
+        try {
+            $content = $this->read($source);
+            $this->write($destination, $content, $config);
+        } catch (Throwable $e) {
+            throw UnableToCopyFile::fromLocationTo($source, $destination, $e);
+        }
 
-        $this->fakeVisibility[$destination] = \strval($config->get(Config::OPTION_VISIBILITY, $this->fakeVisibility[$source] ?? null));
+        $visibility = $config->get(
+            Config::OPTION_VISIBILITY,
+            $this->fakeVisibility[$source] ?? null,
+        );
+        \assert(\is_string($visibility) || \is_int($visibility) || $visibility === null);
+
+        $this->fakeVisibility[$destination] = (string)$visibility;
     }
 
     /** Recursively remove all data from a folder */
@@ -258,10 +271,10 @@ class SmbAdapter implements FilesystemAdapter
             return;
         }
 
-        $directories = \explode(DIRECTORY_SEPARATOR, $path);
+        $directories = \explode(\DIRECTORY_SEPARATOR, $path);
         if (\count($directories) > 1) {
             $parentDirectories = \array_splice($directories, 0, \count($directories) - 1);
-            $this->recursiveCreateDir(\implode(DIRECTORY_SEPARATOR, $parentDirectories));
+            $this->recursiveCreateDir(\implode(\DIRECTORY_SEPARATOR, $parentDirectories));
         }
 
         $location = $this->prefixer->prefixPath($path);

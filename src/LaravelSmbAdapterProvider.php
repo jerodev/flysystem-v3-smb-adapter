@@ -14,7 +14,16 @@ class LaravelSmbAdapterProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Storage::extend('smb', static function ($app, $config) {
+        Storage::extend('smb', function ($app, array $config) {
+            \assert(\is_string($config['smb_version_min']) || $config['smb_version_min'] === null);
+            \assert(\is_string($config['smb_version_max']) || $config['smb_version_max'] === null);
+            \assert(\is_int($config['timeout']) || $config['timeout'] === null);
+            \assert(\is_string($config['host']));
+            \assert(\is_string($config['username']));
+            \assert(\is_string($config['password']));
+            \assert(\is_string($config['workgroup']) || $config['workgroup'] === null);
+            \assert(\is_string($config['path']));
+
             $options = new Options();
             $options->setMinProtocol($config['smb_version_min'] ?? null);
             $options->setMaxProtocol($config['smb_version_max'] ?? null);
@@ -22,7 +31,7 @@ class LaravelSmbAdapterProvider extends ServiceProvider
 
             $server = (new ServerFactory($options))->createServer(
                 $config['host'],
-                new BasicAuth($config['username'], $config['workgroup'] ?? 'WORKGROUP', $config['password'])
+                new BasicAuth($config['username'], $config['workgroup'] ?? 'WORKGROUP', $config['password']),
             );
             $share = $server->getShare($config['path']);
             $adapter = new SmbAdapter($share);
