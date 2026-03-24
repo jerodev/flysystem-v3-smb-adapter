@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39c5051549945f3b90f6da3b993e965b",
+    "content-hash": "eb3d598f3f54b7a11c34f0d37f6549e4",
     "packages": [
         {
             "name": "icewind/smb",
-            "version": "v3.7.0",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://codeberg.org/icewind/SMB",
-                "reference": "e6904cbe75f678335092f4861c60c656b1a99e84"
+                "reference": "e0e86b16640f5892dd00408ed50ad18357dac6c1"
             },
             "require": {
                 "icewind/streams": ">=0.7.3",
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "php wrapper for smbclient and libsmbclient-php",
-            "time": "2024-11-11T14:08:34+00:00"
+            "time": "2023-08-10T13:15:36+00:00"
         },
         {
             "name": "icewind/streams",
