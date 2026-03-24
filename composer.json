@@ -34,7 +34,7 @@
     },
     "require": {
         "php": ">=8.3",
-        "icewind/smb": "^3.5",
+        "icewind/smb": "3.7.*",
         "league/flysystem": "^3.0"
     },
     "require-dev": {

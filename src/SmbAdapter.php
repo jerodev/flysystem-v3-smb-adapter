@@ -45,8 +45,6 @@ class SmbAdapter implements FilesystemAdapter
             $this->share->stat($location);
         } catch (NotFoundException) {
             return false;
-        } catch (Throwable $e) {
-            throw $e;
         }
 
         return true;
@@ -72,7 +70,6 @@ class SmbAdapter implements FilesystemAdapter
                 $this->fakeVisibility[$path] = (string)$visibility;
             }
         } catch (Throwable $e) {
-            throw $e;
             throw UnableToWriteFile::atLocation($location, '', $e);
         } finally {
             if (isset($stream)) {
