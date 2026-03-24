@@ -5,5 +5,9 @@
         <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps" />
     </rule>
 
+    <rule ref="SlevomatCodingStandard.Functions.StaticClosure">
+        <exclude-pattern>src/LaravelSmbAdapterProvider.php</exclude-pattern>
+    </rule>
+
     <file>src</file>
 </ruleset>

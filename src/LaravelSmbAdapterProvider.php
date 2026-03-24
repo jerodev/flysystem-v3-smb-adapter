@@ -14,7 +14,7 @@ class LaravelSmbAdapterProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Storage::extend('smb', static function ($app, array $config) {
+        Storage::extend('smb', function ($app, array $config) {
             \assert(\is_string($config['smb_version_min']) || $config['smb_version_min'] === null);
             \assert(\is_string($config['smb_version_max']) || $config['smb_version_max'] === null);
             \assert(\is_int($config['timeout']) || $config['timeout'] === null);
