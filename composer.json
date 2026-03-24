@@ -34,15 +34,16 @@
     },
     "require": {
         "php": ">=8.3",
-        "icewind/smb": "3.6.*",
+        "icewind/smb": "^3.8",
         "league/flysystem": "^3.0"
     },
     "require-dev": {
         "illuminate/filesystem": "^12.0|^13.0",
         "illuminate/support": "^12.0|^13.0",
         "jerodev/code-styles": "dev-master",
-        "orchestra/testbench": "^11",
         "league/flysystem-adapter-test-utilities": "^3.0",
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^11",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.0"
     },

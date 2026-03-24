@@ -30,7 +30,7 @@ class SmbAdapter implements FilesystemAdapter
     private array $fakeVisibility = [];
 
     public function __construct(
-        private IShare $share,
+        private readonly IShare $share,
         string $prefix = '',
     ) {
         $this->mimeTypeDetector = new FinfoMimeTypeDetector();

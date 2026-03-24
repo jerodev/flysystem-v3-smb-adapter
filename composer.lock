@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb3d598f3f54b7a11c34f0d37f6549e4",
+    "content-hash": "94f556625db776895875a4bac0dacf69",
     "packages": [
         {
             "name": "icewind/smb",
-            "version": "v3.6.0",
+            "version": "3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://codeberg.org/icewind/SMB",
-                "reference": "e0e86b16640f5892dd00408ed50ad18357dac6c1"
+                "reference": "97063a63b44edc6554966f6121679506b8d85103"
             },
             "require": {
                 "icewind/streams": ">=0.7.3",
-                "php": ">=7.2"
+                "php": ">=8.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
+                "friendsofphp/php-cs-fixer": "v3.89.0",
                 "phpstan/phpstan": "^0.12.57",
-                "phpunit/phpunit": "^8.5|^9.3.8",
-                "psalm/phar": "^4.3"
+                "phpunit/phpunit": "10.5.58",
+                "psalm/phar": "6.*"
             },
             "type": "library",
             "autoload": {
@@ -37,11 +37,11 @@
             "authors": [
                 {
                     "name": "Robin Appelman",
-                    "email": "icewind@owncloud.com"
+                    "email": "robin@icewind.nl"
                 }
             ],
             "description": "php wrapper for smbclient and libsmbclient-php",
-            "time": "2023-08-10T13:15:36+00:00"
+            "time": "2025-11-13T16:17:19+00:00"
         },
         {
             "name": "icewind/streams",

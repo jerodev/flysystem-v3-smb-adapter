@@ -1,0 +1,45 @@
+<?php
+
+namespace Jerodev\Flysystem\Smb\Tests;
+
+use Icewind\SMB\BasicAuth;
+use Icewind\SMB\ServerFactory;
+use Jerodev\Flysystem\Smb\SmbAdapter;
+use League\Flysystem\AdapterTestUtilities\FilesystemAdapterTestCase;
+use League\Flysystem\FilesystemAdapter;
+
+final class SmbFilesystemAdapterTest extends FilesystemAdapterTestCase
+{
+    protected static function createFilesystemAdapter(): FilesystemAdapter
+    {
+        /**
+         * @var object{
+         *     host: string,
+         *     user: string,
+         *     password: string,
+         *     share: string,
+         *     root: string,
+         * } $config
+         */
+        $config = \json_decode(\file_get_contents(__DIR__ . '/config.json'));
+
+        $server = (new ServerFactory())->createServer(
+            $config->host,
+            new BasicAuth(
+                $config->user,
+                'test',
+                $config->password,
+            ),
+        );
+        $share = $server->getShare($config->share);
+
+        return new SmbAdapter($share, '');
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        self::$adapter->clearDir('');
+    }
+}
