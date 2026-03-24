@@ -65,7 +65,8 @@ class SmbAdapter implements FilesystemAdapter
             \fwrite($stream, $contents);
 
             if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
-                $this->fakeVisibility[$path] = \strval($visibility);
+                \assert(\is_string($visibility) || \is_int($visibility));
+                $this->fakeVisibility[$path] = (string)$visibility;
             }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
@@ -87,7 +88,8 @@ class SmbAdapter implements FilesystemAdapter
             \stream_copy_to_stream($resource, $stream);
 
             if ($visibility = $config->get(Config::OPTION_VISIBILITY)) {
-                $this->fakeVisibility[$path] = \strval($visibility);
+                \assert(\is_string($visibility) || \is_int($visibility));
+                $this->fakeVisibility[$path] = (string)$visibility;
             }
         } catch (Throwable $e) {
             throw UnableToWriteFile::atLocation($location, '', $e);
@@ -236,7 +238,13 @@ class SmbAdapter implements FilesystemAdapter
         $content = $this->read($source);
         $this->write($destination, $content, $config);
 
-        $this->fakeVisibility[$destination] = \strval($config->get(Config::OPTION_VISIBILITY, $this->fakeVisibility[$source] ?? null));
+        $visibility = $config->get(
+            Config::OPTION_VISIBILITY,
+            $this->fakeVisibility[$source] ?? null,
+        );
+        \assert(\is_string($visibility) || \is_int($visibility) || $visibility === null);
+
+        $this->fakeVisibility[$destination] = (string)$visibility;
     }
 
     /** Recursively remove all data from a folder */
