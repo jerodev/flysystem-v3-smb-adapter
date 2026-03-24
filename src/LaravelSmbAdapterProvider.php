@@ -14,7 +14,7 @@ class LaravelSmbAdapterProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Storage::extend('smb', static function ($app, $config) {
+        Storage::extend('smb', function ($app, $config) {
             $options = new Options();
             $options->setMinProtocol($config['smb_version_min'] ?? null);
             $options->setMaxProtocol($config['smb_version_max'] ?? null);
