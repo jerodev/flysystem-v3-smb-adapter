@@ -12,6 +12,15 @@ final class SmbAdapterTest extends FilesystemAdapterTestCase
 {
     protected static function createFilesystemAdapter(): FilesystemAdapter
     {
+        /**
+         * @var object{
+         *     host: string,
+         *     user: string,
+         *     password: string,
+         *     share: string,
+         *     root: string,
+         * } $config
+         */
         $config = \json_decode(\file_get_contents(__DIR__ . '/config.json'));
 
         $server = (new ServerFactory())->createServer(
@@ -19,8 +28,8 @@ final class SmbAdapterTest extends FilesystemAdapterTestCase
             new BasicAuth(
                 $config->user,
                 'test',
-                $config->password
-            )
+                $config->password,
+            ),
         );
         $share = $server->getShare($config->share);
 
