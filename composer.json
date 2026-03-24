@@ -33,13 +33,13 @@
         }
     },
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.2",
         "icewind/smb": "^3.5",
         "league/flysystem": "^3.0"
     },
     "require-dev": {
-        "illuminate/filesystem": "^13.0",
-        "illuminate/support": "^13.0",
+        "illuminate/filesystem": "^12.0|^13.0",
+        "illuminate/support": "^12.0|^13.0",
         "jerodev/code-styles": "dev-master",
         "orchestra/testbench": "^11",
         "league/flysystem-adapter-test-utilities": "^3.0",

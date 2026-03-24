@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "913da1366758b7923e3d7dcb5b6a99ee",
+    "content-hash": "bd84b65e52643007460606298c252025",
     "packages": [
         {
             "name": "icewind/smb",
@@ -9155,7 +9155,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.3"
+        "php": ">=8.2"
     },
     "platform-dev": {},
     "platform-overrides": {
