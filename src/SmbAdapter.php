@@ -51,7 +51,15 @@ class SmbAdapter implements FilesystemAdapter
 
     public function directoryExists(string $path): bool
     {
-        return $this->fileExists($path);
+        $location = $this->prefixer->prefixPath($path);
+
+        try {
+            $info = $this->share->stat($location);
+        } catch (NotFoundException) {
+            return false;
+        }
+
+        return $info->isDirectory();
     }
 
     public function write(string $path, string $contents, Config $config): void
